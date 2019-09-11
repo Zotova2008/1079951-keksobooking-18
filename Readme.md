@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
-* Студент: [Наталья Зотова](https://up.htmlacademy.ru/javascript/18/user/1079951).
-* Наставник: `Неизвестно`.
+- Студент: [Наталья Зотова](https://up.htmlacademy.ru/javascript/18/user/1079951).
+- Наставник: [Александр Уразаев](https://htmlacademy.ru/profile/urazaev).
 
 ---
 
