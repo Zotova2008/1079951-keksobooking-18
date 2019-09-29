@@ -11,6 +11,12 @@ var offerPriceMax = 50000;
 
 // Тип недвижимости
 var OFFER_TYPE = ['palace', 'flat', 'house', 'bungalo'];
+var OFFER_TYPE_DESCRIPT = {
+  'palace': 'Дворец',
+  'flat': 'Квартира',
+  'house': 'Дом',
+  'bungalo': 'Бунгало'
+};
 
 // Количество комнат
 var offerRoomsMin = 1;
@@ -91,14 +97,19 @@ var getSittingObj = function () {
   return randomObj;
 };
 
+// console.log(getSittingObj());
 // Создание разметки 8 объектов (предложений) с помощью фрагмента
 var mapSetting = document.querySelector('.map');
 mapSetting.classList.remove('map--faded');
 
 // Куда вставлять метку
 var pinContainer = document.querySelector('.map__pins');
+var cardContainer = document.querySelector('.map');
+var cardFilter = document.querySelector('.map__filters-container');
 // Шаблон разметки для расположения метки
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+// Шаблон разметки для карточки
+var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
 var avatarsMarkers = getSittingObj();
 
 // Создаем данные для метки
@@ -114,9 +125,49 @@ var renderMarker = function (marker) {
 };
 
 // Создаем разметку для метки
-var fragment = document.createDocumentFragment();
+var fragmentMarker = document.createDocumentFragment();
 for (var i = 0; i < NUM_OBJ; i++) {
-  fragment.appendChild(renderMarker(avatarsMarkers[i]));
+  fragmentMarker.appendChild(renderMarker(avatarsMarkers[i]));
 }
 // Вставляем в разметку
-pinContainer.appendChild(fragment);
+pinContainer.appendChild(fragmentMarker);
+
+var renderFeatures = function (feature) {
+  var featureFragment = document.createDocumentFragment();
+  for (var k = 0; k < feature.offer.features.length; k++) {
+    var featureElement = document.createElement('li');
+    featureElement.classList.add('popup__feature', 'popup__feature--' + feature.offer.features[k]);
+    featureFragment.appendChild(featureElement);
+  }
+
+  return featureFragment;
+};
+
+
+// Создаем данные для карточки
+var renderCard = function (card) {
+  var cardElement = cardTemplate.cloneNode(true);
+  var featuresList = cardElement.querySelector('.popup__features');
+  cardElement.querySelector('.popup__title').textContent = card.offer.title;
+  cardElement.querySelector('.popup__text--address').textContent = card.offer.address;
+  cardElement.querySelector('.popup__text--price').textContent = card.offer.price + '₽/ночь';
+  cardElement.querySelector('.popup__type').textContent = OFFER_TYPE_DESCRIPT[card.offer.type];
+  cardElement.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты' + ' для ' + card.offer.guests + ' гостей';
+  cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
+  featuresList.innerHTML = '';
+  featuresList.appendChild(renderFeatures(card));
+  cardElement.querySelector('.popup__description').textContent = card.offer.description;
+  cardElement.querySelector('.popup__photos img').src = card.offer.photos;
+  cardElement.querySelector('.popup__avatar').src = card.author.avatar;
+
+  return cardElement;
+};
+
+// Создаем разметку для карточки
+var fragmentCard = document.createDocumentFragment();
+for (var j = 0; j < NUM_OBJ; j++) {
+  fragmentCard.appendChild(renderCard(avatarsMarkers[j]));
+}
+
+// Вставляем в разметку
+cardContainer.insertBefore(fragmentCard, cardFilter);
