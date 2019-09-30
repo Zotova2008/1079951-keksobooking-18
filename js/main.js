@@ -97,7 +97,6 @@ var getSittingObj = function () {
   return randomObj;
 };
 
-// console.log(getSittingObj());
 // Создание разметки 8 объектов (предложений) с помощью фрагмента
 var mapSetting = document.querySelector('.map');
 mapSetting.classList.remove('map--faded');
@@ -110,6 +109,7 @@ var cardFilter = document.querySelector('.map__filters-container');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 // Шаблон разметки для карточки
 var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+
 var avatarsMarkers = getSittingObj();
 
 // Создаем данные для метки
