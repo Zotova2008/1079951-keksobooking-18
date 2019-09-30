@@ -99,7 +99,6 @@ var getSittingObj = function () {
 
 // Создание разметки 8 объектов (предложений) с помощью фрагмента
 var mapSetting = document.querySelector('.map');
-mapSetting.classList.remove('map--faded');
 
 // Куда вставлять метку
 var pinContainer = document.querySelector('.map__pins');
@@ -171,3 +170,50 @@ for (var j = 0; j < NUM_OBJ; j++) {
 
 // Вставляем в разметку
 cardContainer.insertBefore(fragmentCard, cardFilter);
+
+// Неактивное состояние страницы
+var mapPinMain = document.querySelector('.map__pin--main');
+var adForm = document.querySelector('.ad-form');
+var adFormInputs = adForm.querySelectorAll('input');
+var adFormSelects = adForm.querySelectorAll('select');
+var mapFilters = document.querySelector('.map__filters');
+var mapFiltersInputs = mapFilters.querySelectorAll('input');
+var mapFiltersSelects = mapFilters.querySelectorAll('select');
+var ENTER_KEYCODE = 13;
+
+var disabledOn = function (arr) {
+  for (var a = 0; a < arr.length; a++) {
+    arr[a].disabled = true;
+  }
+};
+var disabledOff = function (arr) {
+  for (var a = 0; a < arr.length; a++) {
+    arr[a].disabled = false;
+  }
+};
+
+disabledOn(adFormInputs);
+disabledOn(adFormSelects);
+disabledOn(mapFiltersInputs);
+disabledOn(mapFiltersSelects);
+
+var activePage = function () {
+  mapSetting.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+
+  disabledOff(adFormInputs);
+  disabledOff(adFormSelects);
+  disabledOff(mapFiltersInputs);
+  disabledOff(mapFiltersSelects);
+};
+
+// Переводим страницу в активное состояние
+mapPinMain.addEventListener('mousedown', function () {
+  activePage();
+});
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    activePage();
+  }
+});
