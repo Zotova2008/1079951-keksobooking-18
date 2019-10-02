@@ -162,6 +162,24 @@ var renderCard = function (card) {
   cardElement.querySelector('.popup__photos img').src = card.offer.photos;
   cardElement.querySelector('.popup__avatar').src = card.author.avatar;
 
+  var popupClose = cardElement.querySelector('.popup__close');
+  var closeCard = function () {
+    cardElement.clasList.remove('hodden');
+    document.removeEventListener('keydown', onPopupEscPress);
+  };
+
+  var onPopupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      popupClose();
+    }
+  };
+
+  popupClose.addEventListener('click', function () {
+    closeCard();
+  });
+
+  document.addEventListener('keydown', onPopupEscPress);
+
   return cardElement;
 };
 
@@ -174,48 +192,6 @@ for (var j = 0; j < NUM_OBJ; j++) {
 // Вставляем в разметку
 cardContainer.insertBefore(fragmentCard, cardFilter);
 
-// Открытие и закрытие карточки объявления
-// Находим все сгенерированные map__pin
-var mapPin = pinContainer.querySelectorAll('.map__pin');
-var cardPopup = cardContainer.querySelectorAll('.popup');
-var cardClose = document.querySelectorAll('.map__card .popup__close');
-
-var onPopupEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closeCardPopup();
-  }
-};
-
-var openCardPopup = function () {
-  cardPopup.classList.remove('hidden');
-  document.addEventListener('keydown', onPopupEscPress);
-};
-
-var closeCardPopup = function () {
-  cardPopup.classList.add('hidden');
-  document.removeEventListener('keydown', onPopupEscPress);
-};
-
-mapPin.addEventListener('click', function () {
-  openCardPopup();
-});
-
-mapPin.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    openCardPopup();
-  }
-});
-
-cardClose.addEventListener('click', function () {
-  closeCardPopup();
-});
-
-cardClose.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    closeCardPopup();
-  }
-});
-
 // Неактивное состояние страницы
 var mapPinMain = document.querySelector('.map__pin--main');
 
@@ -225,7 +201,7 @@ var mapFilters = document.querySelector('.map__filters');
 var mapFiltersFieldset = mapFilters.querySelectorAll('fieldset');
 var mapFiltersSelects = mapFilters.querySelectorAll('select');
 
-var isPageAcive = false;
+var isPageActive = false;
 
 var address = document.querySelector('#address');
 
@@ -249,7 +225,7 @@ var mapPinMainActive = function (left, top) {
 };
 
 var activatePage = function () {
-  if (!isPageAcive) {
+  if (!isPageActive) {
     disabledOn(adFormFieldset);
     disabledOn(mapFiltersFieldset);
     disabledOn(mapFiltersSelects);
@@ -272,12 +248,12 @@ activatePage();
 
 // Переводим страницу в активное состояние
 mapPinMain.addEventListener('mousedown', function () {
-  isPageAcive = true;
+  isPageActive = true;
   activatePage();
 });
 
 mapPinMain.addEventListener('keydown', function (evt) {
-  isPageAcive = true;
+  isPageActive = true;
   if (evt.keyCode === ENTER_KEYCODE) {
     activatePage();
   }
