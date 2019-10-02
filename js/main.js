@@ -1,5 +1,7 @@
 'use strict';
 
+var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 // Количество объявлений
 var NUM_OBJ = 8;
 // Заголовок предложения
@@ -19,8 +21,6 @@ var OFFER_TYPE_DESCRIPT = {
 };
 
 // Количество комнат
-// var offerRoomsMin = 1;
-// var offerRoomsMax = 3;
 var OFFER_ROOMS = ['1 комната', '2 комнаты', '3 комнаты', '100 комнат'];
 var OFFER_QUESTS = ['для 1 гостя', 'для 2 гостей', 'для 3 гостей', 'не для гостей'];
 
@@ -143,10 +143,12 @@ var renderFeatures = function (feature) {
   return featureFragment;
 };
 
-
 // Создаем данные для карточки
 var renderCard = function (card) {
   var cardElement = cardTemplate.cloneNode(true);
+  // По умолчанию скрываем карточки объявления
+  cardElement.classList.add('hidden');
+
   var featuresList = cardElement.querySelector('.popup__features');
   cardElement.querySelector('.popup__title').textContent = card.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = card.offer.address;
@@ -172,6 +174,48 @@ for (var j = 0; j < NUM_OBJ; j++) {
 // Вставляем в разметку
 cardContainer.insertBefore(fragmentCard, cardFilter);
 
+// Открытие и закрытие карточки объявления
+// Находим все сгенерированные map__pin
+var mapPin = pinContainer.querySelectorAll('.map__pin');
+var cardPopup = cardContainer.querySelectorAll('.popup');
+var cardClose = document.querySelectorAll('.map__card .popup__close');
+
+var onPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeCardPopup();
+  }
+};
+
+var openCardPopup = function () {
+  cardPopup.classList.remove('hidden');
+  document.addEventListener('keydown', onPopupEscPress);
+};
+
+var closeCardPopup = function () {
+  cardPopup.classList.add('hidden');
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+mapPin.addEventListener('click', function () {
+  openCardPopup();
+});
+
+mapPin.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    openCardPopup();
+  }
+});
+
+cardClose.addEventListener('click', function () {
+  closeCardPopup();
+});
+
+cardClose.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closeCardPopup();
+  }
+});
+
 // Неактивное состояние страницы
 var mapPinMain = document.querySelector('.map__pin--main');
 
@@ -184,8 +228,6 @@ var mapFiltersSelects = mapFilters.querySelectorAll('select');
 var isPageAcive = false;
 
 var address = document.querySelector('#address');
-
-var ENTER_KEYCODE = 13;
 
 var disabledOn = function (arr) {
   for (var a = 0; a < arr.length; a++) {
