@@ -3,7 +3,7 @@
 // Количество объявлений
 var NUM_OBJ = 8;
 // Заголовок предложения
-var OFFER_TITLE = ['Супер цена', 'Рядом с метро', 'В центре', 'Рядом с парком'];
+var OFFER_TITLE = ['Уютное гнездышко для молодоженов', 'Маленькая квартирка рядом с парком', 'Небольшая лавочка в парке', 'Маленькая квартирка на чердаке'];
 
 // Стоимость недвижимости
 var offerPriceMin = 1000;
@@ -129,8 +129,6 @@ var fragmentMarker = document.createDocumentFragment();
 for (var i = 0; i < NUM_OBJ; i++) {
   fragmentMarker.appendChild(renderMarker(avatarsMarkers[i]));
 }
-// Вставляем в разметку
-pinContainer.appendChild(fragmentMarker);
 
 var renderFeatures = function (feature) {
   var featureFragment = document.createDocumentFragment();
@@ -169,9 +167,6 @@ for (var j = 0; j < NUM_OBJ; j++) {
   fragmentCard.appendChild(renderCard(avatarsMarkers[j]));
 }
 
-// Вставляем в разметку
-cardContainer.insertBefore(fragmentCard, cardFilter);
-
 // Неактивное состояние страницы
 var mapPinMain = document.querySelector('.map__pin--main');
 
@@ -181,7 +176,7 @@ var mapFilters = document.querySelector('.map__filters');
 var mapFiltersFieldset = mapFilters.querySelectorAll('fieldset');
 var mapFiltersSelects = mapFilters.querySelectorAll('select');
 
-var isPageAcive = false;
+var isPageActive = false;
 
 var address = document.querySelector('#address');
 
@@ -207,7 +202,7 @@ var mapPinMainActive = function (left, top) {
 };
 
 var activatePage = function () {
-  if (!isPageAcive) {
+  if (!isPageActive) {
     disabledOn(adFormFieldset);
     disabledOn(mapFiltersFieldset);
     disabledOn(mapFiltersSelects);
@@ -224,18 +219,23 @@ var activatePage = function () {
     mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) - HEIGHT_MARKER / 2);
 
     mapPinMainActive(mapPinMainLeft, mapPinMainTop);
+
+    // Вставляем в разметку метки
+    pinContainer.appendChild(fragmentMarker);
+    // Вставляем в разметку карточки
+    cardContainer.insertBefore(fragmentCard, cardFilter);
   }
 };
 activatePage();
 
 // Переводим страницу в активное состояние
 mapPinMain.addEventListener('mousedown', function () {
-  isPageAcive = true;
+  isPageActive = true;
   activatePage();
 });
 
 mapPinMain.addEventListener('keydown', function (evt) {
-  isPageAcive = true;
+  isPageActive = true;
   if (evt.keyCode === ENTER_KEYCODE) {
     activatePage();
   }
