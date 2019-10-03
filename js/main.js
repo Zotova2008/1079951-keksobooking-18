@@ -37,8 +37,10 @@ var OFFER_PHOTO = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http:/
 
 // Координаты по оси X
 var WIDTH_MAP = document.querySelector('.map').clientWidth;
-var WIDTH_MARKER = document.querySelector('.map__pin').clientWidth;
-var HEIGHT_MARKER = document.querySelector('.map__pin').clientHeight;
+var HEIGHT_MAP = document.querySelector('.map').clientHeight;
+var WIDTH_MARKER = 65;
+var HEIGHT_MARKER = 65;
+var HEIGHT_MARKER_AFTER = 22;
 var LOCATION_Y_MIN = 130;
 var LOCATION_Y_MAX = 630;
 
@@ -194,11 +196,20 @@ var disabledOff = function (arr) {
 };
 
 // Положения метки при не активном режиме
-var mapPinMainLeft = parseInt(mapPinMain.style.left, 10);
-var mapPinMainTop = parseInt(mapPinMain.style.top, 10);
+// Координаты главной метки для поля адрес в объявлении
+var pinMainLeftAdressDisabled = Math.floor(WIDTH_MAP / 2);
+var pinMainTopAdressDisabled = Math.floor(HEIGHT_MAP / 2);
+var pinMainLeftAdressActive = pinMainLeftAdressDisabled;
+var pinMainTopAdressActive = pinMainTopAdressDisabled + Math.floor(HEIGHT_MARKER / 2) + HEIGHT_MARKER_AFTER;
+// Координаты главной метки для стилей
+var pinMainLeft = pinMainLeftAdressDisabled - Math.floor(WIDTH_MARKER / 2);
+var pinMainTop = pinMainTopAdressDisabled - Math.floor(HEIGHT_MARKER / 2);
+
 // Положение метки при активном режиме
-var mapPinMainActive = function (left, top) {
+var mapPinMainValue = function (left, top) {
   address.value = left + ', ' + top;
+  mapPinMain.style.left = pinMainLeft + 'px';
+  mapPinMain.style.top = pinMainTop + 'px';
 };
 
 var activatePage = function () {
@@ -207,7 +218,7 @@ var activatePage = function () {
     disabledOn(mapFiltersFieldset);
     disabledOn(mapFiltersSelects);
 
-    mapPinMainActive(mapPinMainLeft, mapPinMainTop);
+    mapPinMainValue(pinMainLeftAdressDisabled, pinMainTopAdressDisabled);
   } else {
     mapSetting.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
@@ -215,10 +226,7 @@ var activatePage = function () {
     disabledOff(mapFiltersFieldset);
     disabledOff(mapFiltersSelects);
 
-    mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10));
-    mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + HEIGHT_MARKER);
-
-    mapPinMainActive(mapPinMainLeft, mapPinMainTop);
+    mapPinMainValue(pinMainLeftAdressActive, pinMainTopAdressActive);
 
     // Вставляем в разметку метки
     pinContainer.appendChild(fragmentMarker);
