@@ -198,7 +198,7 @@ var mapPinMainLeft = parseInt(mapPinMain.style.left, 10);
 var mapPinMainTop = parseInt(mapPinMain.style.top, 10);
 // Положение метки при активном режиме
 var mapPinMainActive = function (left, top) {
-  address.value = left + 'px' + ' ' + top + 'px';
+  address.value = left + ', ' + top;
 };
 
 var activatePage = function () {
@@ -215,8 +215,8 @@ var activatePage = function () {
     disabledOff(mapFiltersFieldset);
     disabledOff(mapFiltersSelects);
 
-    mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) - WIDTH_MARKER / 2);
-    mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) - HEIGHT_MARKER / 2);
+    mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10));
+    mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + HEIGHT_MARKER);
 
     mapPinMainActive(mapPinMainLeft, mapPinMainTop);
 
