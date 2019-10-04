@@ -1,11 +1,9 @@
 'use strict';
 
-var ENTER_KEYCODE = 13;
-var ESC_KEYCODE = 27;
 // Количество объявлений
 var NUM_OBJ = 8;
 // Заголовок предложения
-var OFFER_TITLE = ['Супер цена', 'Рядом с метро', 'В центре', 'Рядом с парком'];
+var OFFER_TITLE = ['Уютное гнездышко для молодоженов', 'Маленькая квартирка рядом с парком', 'Небольшая лавочка в парке', 'Маленькая квартирка на чердаке'];
 
 // Стоимость недвижимости
 var offerPriceMin = 1000;
@@ -21,6 +19,8 @@ var OFFER_TYPE_DESCRIPT = {
 };
 
 // Количество комнат
+// var offerRoomsMin = 1;
+// var offerRoomsMax = 3;
 var OFFER_ROOMS = ['1 комната', '2 комнаты', '3 комнаты', '100 комнат'];
 var OFFER_QUESTS = ['для 1 гостя', 'для 2 гостей', 'для 3 гостей', 'не для гостей'];
 
@@ -37,8 +37,8 @@ var OFFER_PHOTO = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http:/
 
 // Координаты по оси X
 var WIDTH_MAP = document.querySelector('.map').clientWidth;
-var WIDTH_MARKER = document.querySelector('.map__pin').clientWidth;
-var HEIGHT_MARKER = document.querySelector('.map__pin').clientHeight;
+var WIDTH_MARKER = 65;
+var HEIGHT_MARKER = 87;
 var LOCATION_Y_MIN = 130;
 var LOCATION_Y_MAX = 630;
 
@@ -99,11 +99,9 @@ var getSittingObj = function () {
 };
 
 // Создание разметки 8 объектов (предложений) с помощью фрагмента
-var mapSetting = document.querySelector('.map');
-
+var map = document.querySelector('.map');
 // Куда вставлять метку
 var pinContainer = document.querySelector('.map__pins');
-var cardContainer = document.querySelector('.map');
 var cardFilter = document.querySelector('.map__filters-container');
 // Шаблон разметки для расположения метки
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -129,8 +127,6 @@ var fragmentMarker = document.createDocumentFragment();
 for (var i = 0; i < NUM_OBJ; i++) {
   fragmentMarker.appendChild(renderMarker(avatarsMarkers[i]));
 }
-// Вставляем в разметку
-pinContainer.appendChild(fragmentMarker);
 
 var renderFeatures = function (feature) {
   var featureFragment = document.createDocumentFragment();
@@ -143,12 +139,10 @@ var renderFeatures = function (feature) {
   return featureFragment;
 };
 
+
 // Создаем данные для карточки
 var renderCard = function (card) {
   var cardElement = cardTemplate.cloneNode(true);
-  // По умолчанию скрываем карточки объявления
-  cardElement.classList.add('hidden');
-
   var featuresList = cardElement.querySelector('.popup__features');
   cardElement.querySelector('.popup__title').textContent = card.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = card.offer.address;
@@ -162,24 +156,6 @@ var renderCard = function (card) {
   cardElement.querySelector('.popup__photos img').src = card.offer.photos;
   cardElement.querySelector('.popup__avatar').src = card.author.avatar;
 
-  var popupClose = cardElement.querySelector('.popup__close');
-  var closeCard = function () {
-    cardElement.clasList.remove('hodden');
-    document.removeEventListener('keydown', onPopupEscPress);
-  };
-
-  var onPopupEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      popupClose();
-    }
-  };
-
-  popupClose.addEventListener('click', function () {
-    closeCard();
-  });
-
-  document.addEventListener('keydown', onPopupEscPress);
-
   return cardElement;
 };
 
@@ -188,9 +164,6 @@ var fragmentCard = document.createDocumentFragment();
 for (var j = 0; j < NUM_OBJ; j++) {
   fragmentCard.appendChild(renderCard(avatarsMarkers[j]));
 }
-
-// Вставляем в разметку
-cardContainer.insertBefore(fragmentCard, cardFilter);
 
 // Неактивное состояние страницы
 var mapPinMain = document.querySelector('.map__pin--main');
@@ -204,6 +177,8 @@ var mapFiltersSelects = mapFilters.querySelectorAll('select');
 var isPageActive = false;
 
 var address = document.querySelector('#address');
+
+var ENTER_KEYCODE = 13;
 
 var disabledOn = function (arr) {
   for (var a = 0; a < arr.length; a++) {
@@ -221,7 +196,7 @@ var mapPinMainLeft = parseInt(mapPinMain.style.left, 10);
 var mapPinMainTop = parseInt(mapPinMain.style.top, 10);
 // Положение метки при активном режиме
 var mapPinMainActive = function (left, top) {
-  address.value = left + 'px' + ' ' + top + 'px';
+  address.value = left + ', ' + top;
 };
 
 var activatePage = function () {
@@ -232,16 +207,21 @@ var activatePage = function () {
 
     mapPinMainActive(mapPinMainLeft, mapPinMainTop);
   } else {
-    mapSetting.classList.remove('map--faded');
+    map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     disabledOff(adFormFieldset);
     disabledOff(mapFiltersFieldset);
     disabledOff(mapFiltersSelects);
 
-    mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) - WIDTH_MARKER / 2);
-    mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) - HEIGHT_MARKER / 2);
+    mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + WIDTH_MARKER / 2);
+    mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + HEIGHT_MARKER);
 
     mapPinMainActive(mapPinMainLeft, mapPinMainTop);
+
+    // Вставляем в разметку метки
+    pinContainer.appendChild(fragmentMarker);
+    // Вставляем в разметку карточки
+    map.insertBefore(fragmentCard, cardFilter);
   }
 };
 activatePage();
