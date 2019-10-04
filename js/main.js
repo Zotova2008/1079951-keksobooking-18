@@ -215,8 +215,8 @@ var activatePage = function () {
     disabledOff(mapFiltersFieldset);
     disabledOff(mapFiltersSelects);
 
-    mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) - WIDTH_MARKER / 2);
-    mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) - HEIGHT_MARKER);
+    mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + WIDTH_MARKER / 2);
+    mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + HEIGHT_MARKER);
 
     mapPinMainActive(mapPinMainLeft, mapPinMainTop);
 
