@@ -273,7 +273,7 @@ var activatePage = function () {
       var popupHidden = map.querySelectorAll('.popup.hidden');
       item.addEventListener('click', function (evt) {
         evt.preventDefault();
-        var modalId = evt.target.getAttribute('data-id');
+        var modalId = item.getAttribute('data-id');
         var modalElem = document.querySelector('.popup[id="' + modalId + '"]');
         for (var a = 0; a < popup.length; a++) {
           if (popupHidden) {
