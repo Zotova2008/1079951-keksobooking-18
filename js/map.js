@@ -38,7 +38,7 @@
       window.util.disabledOff(mapFiltersFieldset);
       window.util.disabledOff(mapFiltersSelects);
 
-      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + window.map.widthMarker / 2);
+      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + window.card.widthMarker / 2);
       mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + window.card.heightMarket);
 
       mapPinMainActive(mapPinMainLeft, mapPinMainTop);
