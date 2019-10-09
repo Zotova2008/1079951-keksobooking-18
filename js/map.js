@@ -38,8 +38,8 @@
       window.util.disabledOff(mapFiltersFieldset);
       window.util.disabledOff(mapFiltersSelects);
 
-      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + window.card.widthMarker / 2);
-      mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + window.card.heightMarket);
+      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + window.card.WIDTH_MARKER / 2);
+      mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + window.card.HEIGHT_MARKER);
 
       mapPinMainActive(mapPinMainLeft, mapPinMainTop);
 
@@ -74,14 +74,14 @@
 
           if (parseInt(target.style.left, 10) < 0) {
             target.style.left = '0px';
-          } else if (parseInt(target.style.left, 10) > window.card.widthMap - window.card.widthMarker - window.card.widthMarker / 2) {
-            target.style.left = window.card.widthMap - window.card.widthMarker - window.card.widthMarker / 2 + 'px';
+          } else if (parseInt(target.style.left, 10) > window.card.WIDTH_MAP - window.card.WIDTH_MARKER) {
+            target.style.left = window.card.WIDTH_MAP - window.card.WIDTH_MARKER + 'px';
           }
 
-          if (parseInt(target.style.top, 10) < window.card.locationYMin) {
-            target.style.top = window.card.locationYMin + 'px';
-          } else if (parseInt(target.style.top, 10) > window.card.locationYMax) {
-            target.style.top = window.card.locationYMax + 'px';
+          if (parseInt(target.style.top, 10) < window.card.LOCATION_Y_MIN) {
+            target.style.top = window.card.LOCATION_Y_MIN + 'px';
+          } else if (parseInt(target.style.top, 10) > window.card.LOCATION_Y_MAX) {
+            target.style.top = window.card.LOCATION_Y_MAX + 'px';
           }
 
           mapPinMainActive(parseInt(target.style.left, 10), parseInt(target.style.top, 10));
@@ -119,7 +119,7 @@
         item.addEventListener('keydown', function (evt) {
           var modalId = evt.target.getAttribute('data-id');
           var modalElem = document.querySelector('.popup[id="' + modalId + '"]');
-          if (evt.keyCode === window.util.enter) {
+          if (evt.keyCode === window.util.ENTER) {
             evt.preventDefault();
 
             for (var a = 0; a < popup.length; a++) {
@@ -130,7 +130,7 @@
             window.util.openPopup(modalElem);
           }
 
-          if (evt.keyCode === window.util.esc) {
+          if (evt.keyCode === window.util.ESC) {
             modalElem.classList.add('hidden');
           }
         });
@@ -153,7 +153,7 @@
 
   mapPinMain.addEventListener('keydown', function (evt) {
     isPageActive = true;
-    if (evt.keyCode === window.util.enter) {
+    if (evt.keyCode === window.util.ENTER) {
       activatePage();
     }
   });

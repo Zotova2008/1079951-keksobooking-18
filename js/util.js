@@ -1,8 +1,8 @@
 'use strict';
 
 (function () {
-  var esc = 27;
-  var enter = 13;
+  var ESC = 27;
+  var ENTER = 13;
 
   // Случайное число из диапазона значений
   var getRandomRange = function (min, max) {
@@ -44,8 +44,8 @@
   };
 
   window.util = {
-    esc: esc,
-    enter: enter,
+    ESC: ESC,
+    ENTER: ENTER,
     getRandomRange: getRandomRange,
     getRandomIndex: getRandomIndex,
     getRandomArray: getRandomArray,
