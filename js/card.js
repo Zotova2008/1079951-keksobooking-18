@@ -120,8 +120,11 @@
   }
 
   window.card = {
-    widthMarker: WIDTH_MARKER,
-    heightMarket: HEIGHT_MARKER,
+    WIDTH_MAP: WIDTH_MAP,
+    LOCATION_Y_MIN: LOCATION_Y_MIN,
+    LOCATION_Y_MAX: LOCATION_Y_MAX,
+    WIDTH_MARKER: WIDTH_MARKER,
+    HEIGHT_MARKER: HEIGHT_MARKER,
     fragmentMarker: fragmentMarker,
     fragmentCard: fragmentCard,
   };

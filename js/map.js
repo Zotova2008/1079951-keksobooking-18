@@ -38,8 +38,8 @@
       window.util.disabledOff(mapFiltersFieldset);
       window.util.disabledOff(mapFiltersSelects);
 
-      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + window.card.widthMarker / 2);
-      mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + window.card.heightMarket);
+      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + window.card.WIDTH_MARKER / 2);
+      mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + window.card.HEIGHT_MARKER);
 
       mapPinMainActive(mapPinMainLeft, mapPinMainTop);
 
@@ -48,35 +48,55 @@
       // Вставляем в разметку карточки
       map.insertBefore(window.card.fragmentCard, cardFilters);
 
-      mapPinMain.onmousedown = function (event) {
-        var shiftX = event.clientX - mapPinMain.getBoundingClientRect().left;
-        var shiftY = event.clientY - mapPinMain.getBoundingClientRect().top;
-        mapPinMain.style.position = 'absolute';
-        mapPinMain.style.zIndex = 1000;
-        document.body.append(mapPinMain);
-        moveAt(event.pageX, event.pageY);
-        // переносит пин на координаты (pageX, pageY),
-        // дополнительно учитывая изначальный сдвиг относительно указателя мыши
-        function moveAt(pageX, pageY) {
-          mapPinMain.style.left = pageX - shiftX + 'px';
-          mapPinMain.style.top = pageY - shiftY + 'px';
+      mapPinMain.addEventListener('mousedown', function (evt) {
+        evt.preventDefault();
+        var target = evt.currentTarget;
+
+        var startCoords = {
+          x: evt.clientX,
+          y: evt.clientY
+        };
+
+        function onMouseMove(moveEvt) {
+          moveEvt.preventDefault();
+          var shift = {
+            x: startCoords.x - moveEvt.clientX,
+            y: startCoords.y - moveEvt.clientY
+          };
+
+          startCoords = {
+            x: moveEvt.clientX,
+            y: moveEvt.clientY
+          };
+
+          mapPinMain.style.top = mapPinMain.offsetTop - shift.y + 'px';
+          mapPinMain.style.left = mapPinMain.offsetLeft - shift.x + 'px';
+
+          if (parseInt(target.style.left, 10) < 0) {
+            target.style.left = '0px';
+          } else if (parseInt(target.style.left, 10) > window.card.WIDTH_MAP - window.card.WIDTH_MARKER) {
+            target.style.left = window.card.WIDTH_MAP - window.card.WIDTH_MARKER + 'px';
+          }
+
+          if (parseInt(target.style.top, 10) < window.card.LOCATION_Y_MIN) {
+            target.style.top = window.card.LOCATION_Y_MIN + 'px';
+          } else if (parseInt(target.style.top, 10) > window.card.LOCATION_Y_MAX) {
+            target.style.top = window.card.LOCATION_Y_MAX + 'px';
+          }
+
+          mapPinMainActive(parseInt(target.style.left, 10), parseInt(target.style.top, 10));
         }
 
-        function onMouseMove(evt) {
-          moveAt(evt.pageX, evt.pageY);
-          mapPinMainActive(Math.floor(parseInt(mapPinMain.style.left, 10)), Math.floor(parseInt(mapPinMain.style.top, 10)));
-        }
-        // передвигаем пин при событии mousemove
-        document.addEventListener('mousemove', onMouseMove);
-        // отпустить пин, удалить ненужные обработчики
-        mapPinMain.onmouseup = function () {
+        function onMouseUp(upEvt) {
+          upEvt.preventDefault();
+
           document.removeEventListener('mousemove', onMouseMove);
-          mapPinMain.onmouseup = null;
-        };
-      };
-      mapPinMain.ondragstart = function () {
-        return false;
-      };
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+      });
 
       var popup = map.querySelectorAll('.popup');
       var mapPin = mapPins.querySelectorAll('.map__pin:not(.map__pin--main)');
@@ -99,7 +119,7 @@
         item.addEventListener('keydown', function (evt) {
           var modalId = evt.target.getAttribute('data-id');
           var modalElem = document.querySelector('.popup[id="' + modalId + '"]');
-          if (evt.keyCode === window.util.enter) {
+          if (evt.keyCode === window.util.ENTER) {
             evt.preventDefault();
 
             for (var a = 0; a < popup.length; a++) {
@@ -110,7 +130,7 @@
             window.util.openPopup(modalElem);
           }
 
-          if (evt.keyCode === window.util.esc) {
+          if (evt.keyCode === window.util.ESC) {
             modalElem.classList.add('hidden');
           }
         });
@@ -133,7 +153,7 @@
 
   mapPinMain.addEventListener('keydown', function (evt) {
     isPageActive = true;
-    if (evt.keyCode === window.util.enter) {
+    if (evt.keyCode === window.util.ENTER) {
       activatePage();
     }
   });
