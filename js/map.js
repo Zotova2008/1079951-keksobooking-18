@@ -160,5 +160,11 @@
 
   window.map = {
     adForm: adForm,
+    map: map,
+    mapPinMain: mapPinMain,
+    mapPinMainLeft: mapPinMainLeft,
+    mapPinMainTop: mapPinMainTop,
+    isPageActive: isPageActive,
+    mapPinMainActive: mapPinMainActive
   };
 })();

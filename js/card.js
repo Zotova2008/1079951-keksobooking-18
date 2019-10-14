@@ -16,6 +16,7 @@
 
   var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var main = document.querySelector('main');
 
   // Создаем данные для метки
   var renderMarker = function (data) {
@@ -78,11 +79,30 @@
     }
   };
 
+  var successHandler = function () {
+    var successTemplate = document.querySelector('#success').content.querySelector('.success');
+    var successElement = successTemplate.cloneNode(true);
+    main.appendChild(successElement);
+
+    document.addEventListener('click', function () {
+      if (main.contains(successElement)) {
+        successElement.classList.add('hidden');
+        window.map.isPageActive = false;
+      }
+    });
+
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.map.ESC_KEY_CODE && main.contains(successElement)) {
+        successElement.classList.add('hidden');
+        window.map.isPageActive = false;
+      }
+    });
+  };
+
   var errorHandler = function () {
     var fragment = document.createDocumentFragment();
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorElement = errorTemplate.cloneNode(true);
-    var main = document.querySelector('main');
     fragment.appendChild(errorElement);
     main.appendChild(fragment);
 
@@ -101,6 +121,7 @@
     WIDTH_MARKER: WIDTH_MARKER,
     HEIGHT_MARKER: HEIGHT_MARKER,
     fragmentMarker: fragmentMarker,
-    fragmentCard: fragmentCard
+    fragmentCard: fragmentCard,
+    successHandler: successHandler
   };
 })();

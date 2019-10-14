@@ -16,6 +16,8 @@
   var inputCapacityOptions = inputCapacity.querySelectorAll('option');
   var timein = window.map.adForm.querySelector('#timein');
   var timeout = window.map.adForm.querySelector('#timeout');
+  var MAIN_PIN_DEF_X = 570;
+  var MAIN_PIN_DEF_Y = 375;
 
   inputType.addEventListener('change', function () {
     var inputTypeCurrentValue = inputType.querySelector('option:checked').value;
@@ -79,4 +81,17 @@
 
   // добавляем ее на событие change
   inputRoomNumber.addEventListener('change', changeInputRoomNumber);
+
+  var successSaveHandler = function (evt) {
+    window.backend.save(new FormData(window.map.adForm), function () {
+      window.map.adForm.reset();
+      window.map.mapPinMain.style.top = MAIN_PIN_DEF_Y + 'px';
+      window.map.mapPinMain.style.left = MAIN_PIN_DEF_X + 'px';
+      window.map.mapPinMainActive(MAIN_PIN_DEF_X, MAIN_PIN_DEF_Y);
+      window.card.successHandler();
+    }, window.card.errorHandler);
+    evt.preventDefault();
+  };
+
+  window.map.adForm.addEventListener('submit', successSaveHandler, window.card.errorHandler);
 })();
