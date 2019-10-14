@@ -87,14 +87,12 @@
     document.addEventListener('click', function () {
       if (main.contains(successElement)) {
         successElement.classList.add('hidden');
-        window.map.isPageActive = false;
       }
     });
 
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.map.ESC_KEY_CODE && main.contains(successElement)) {
         successElement.classList.add('hidden');
-        window.map.isPageActive = false;
       }
     });
   };
