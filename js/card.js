@@ -120,6 +120,7 @@
     HEIGHT_MARKER: HEIGHT_MARKER,
     fragmentMarker: fragmentMarker,
     fragmentCard: fragmentCard,
-    successHandler: successHandler
+    successHandler: successHandler,
+    errorHandler: errorHandler
   };
 })();
