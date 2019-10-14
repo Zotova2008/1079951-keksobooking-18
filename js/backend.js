@@ -38,7 +38,7 @@
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
-        onSuccess();
+        onSuccess(xhr.response);
       } else {
         onError('Ошибка! ' + 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
@@ -60,7 +60,6 @@
 
   window.backend = {
     load: load,
-    save: save,
-    // errorHandler: errorHandler
+    save: save
   };
 })();

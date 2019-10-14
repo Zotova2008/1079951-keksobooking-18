@@ -145,8 +145,52 @@
   };
   activatePage();
 
+  var removePins = function () {
+    var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < pins.length; i++) {
+      if (!pins[i].classList.contains('hidden')) {
+        pins[i].classList.toggle('hidden');
+      }
+    }
+  };
+
+  var removePopup = function () {
+    var popup = document.querySelectorAll('.popup');
+    for (var i = 0; i < popup.length; i++) {
+      if (!popup[i].classList.contains('hidden')) {
+        popup[i].classList.add('hidden');
+      }
+    }
+  };
+
+  var MAIN_PIN_DEF_X = 570;
+  var MAIN_PIN_DEF_Y = 375;
+  var successSaveHandler = function (evt) {
+    window.backend.save(new FormData(adForm), function () {
+      adForm.reset();
+      adForm.classList.add('ad-form--disabled');
+      map.classList.add('map--faded');
+      removePins();
+      removePopup();
+      isPageActive = false;
+      mapPinMain.style.top = MAIN_PIN_DEF_Y + 'px';
+      mapPinMain.style.left = MAIN_PIN_DEF_X + 'px';
+      mapPinMainActive(MAIN_PIN_DEF_X, MAIN_PIN_DEF_Y);
+      window.card.successHandler();
+    }, window.card.errorHandler);
+    evt.preventDefault();
+  };
+
+  adForm.addEventListener('submit', successSaveHandler, window.card.errorHandler);
+
   // Переводим страницу в активное состояние
   mapPinMain.addEventListener('mousedown', function () {
+    var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < pins.length; i++) {
+      if (pins[i].classList.contains('hidden')) {
+        pins[i].classList.remove('hidden');
+      }
+    }
     isPageActive = true;
     activatePage();
   });
@@ -154,11 +198,23 @@
   mapPinMain.addEventListener('keydown', function (evt) {
     isPageActive = true;
     if (evt.keyCode === window.util.ENTER) {
+      var pins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+      for (var i = 0; i < pins.length; i++) {
+        if (pins[i].classList.contains('hidden')) {
+          pins[i].classList.remove('hidden');
+        }
+      }
       activatePage();
     }
   });
 
   window.map = {
     adForm: adForm,
+    map: map,
+    mapPinMain: mapPinMain,
+    mapPinMainLeft: mapPinMainLeft,
+    mapPinMainTop: mapPinMainTop,
+    isPageActive: isPageActive,
+    mapPinMainActive: mapPinMainActive
   };
 })();
