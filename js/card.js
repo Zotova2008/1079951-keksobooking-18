@@ -8,15 +8,9 @@
     'bungalo': 'Бунгало'
   };
 
-  var WIDTH_MAP = document.querySelector('.map').clientWidth;
-  var WIDTH_MARKER = 65;
-  var HEIGHT_MARKER = 87;
-  var LOCATION_Y_MIN = 130;
-  var LOCATION_Y_MAX = 630;
-
+  var pinsNum = 5;
   var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-  var main = document.querySelector('main');
 
   // Создаем данные для метки
   var renderMarker = function (data) {
@@ -71,7 +65,7 @@
   // Создаем разметку для карточки
   var fragmentCard = document.createDocumentFragment();
   var successAvater = function (avatar) {
-    for (var i = 0; i < avatar.length; i++) {
+    for (var i = 0; i < avatar.length && i < pinsNum; i++) {
       fragmentMarker.appendChild(renderMarker(avatar[i]));
       fragmentMarker.childNodes[i].dataset.id = i + 1;
       fragmentCard.appendChild(renderCard(avatar[i]));
@@ -79,48 +73,13 @@
     }
   };
 
-  var successHandler = function () {
-    var successTemplate = document.querySelector('#success').content.querySelector('.success');
-    var successElement = successTemplate.cloneNode(true);
-    main.appendChild(successElement);
-
-    document.addEventListener('click', function () {
-      if (main.contains(successElement)) {
-        successElement.classList.add('hidden');
-      }
-    });
-
-    document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.map.ESC_KEY_CODE && main.contains(successElement)) {
-        successElement.classList.add('hidden');
-      }
-    });
-  };
-
-  var errorHandler = function () {
-    var fragment = document.createDocumentFragment();
-    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-    var errorElement = errorTemplate.cloneNode(true);
-    fragment.appendChild(errorElement);
-    main.appendChild(fragment);
-
-    var errorBtn = document.querySelector('.error__button');
-    errorBtn.addEventListener('click', function () {
-      window.backend.load(successAvater, errorHandler);
-    });
-  };
-
-  window.backend.load(successAvater, errorHandler);
+  window.backend.load(successAvater, window.util.errorHandler);
 
   window.card = {
-    WIDTH_MAP: WIDTH_MAP,
-    LOCATION_Y_MIN: LOCATION_Y_MIN,
-    LOCATION_Y_MAX: LOCATION_Y_MAX,
-    WIDTH_MARKER: WIDTH_MARKER,
-    HEIGHT_MARKER: HEIGHT_MARKER,
     fragmentMarker: fragmentMarker,
     fragmentCard: fragmentCard,
-    successHandler: successHandler,
-    errorHandler: errorHandler
+    successAvater: successAvater,
+    renderMarker: renderMarker,
+    pinsNum: pinsNum,
   };
 })();

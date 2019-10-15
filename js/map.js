@@ -19,6 +19,9 @@
 
   var cardFilters = document.querySelector('.map__filters-container');
 
+  var WIDTH_MARKER = 65;
+  var HEIGHT_MARKER = 87;
+
   // Положение метки при активном режиме
   var mapPinMainActive = function (left, top) {
     address.value = left + ', ' + top;
@@ -38,8 +41,8 @@
       window.util.disabledOff(mapFiltersFieldset);
       window.util.disabledOff(mapFiltersSelects);
 
-      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + window.card.WIDTH_MARKER / 2);
-      mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + window.card.HEIGHT_MARKER);
+      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + WIDTH_MARKER / 2);
+      mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + HEIGHT_MARKER);
 
       mapPinMainActive(mapPinMainLeft, mapPinMainTop);
 
@@ -48,99 +51,8 @@
       // Вставляем в разметку карточки
       map.insertBefore(window.card.fragmentCard, cardFilters);
 
-      mapPinMain.addEventListener('mousedown', function (evt) {
-        evt.preventDefault();
-        var target = evt.currentTarget;
-
-        var startCoords = {
-          x: evt.clientX,
-          y: evt.clientY
-        };
-
-        function onMouseMove(moveEvt) {
-          moveEvt.preventDefault();
-          var shift = {
-            x: startCoords.x - moveEvt.clientX,
-            y: startCoords.y - moveEvt.clientY
-          };
-
-          startCoords = {
-            x: moveEvt.clientX,
-            y: moveEvt.clientY
-          };
-
-          mapPinMain.style.top = mapPinMain.offsetTop - shift.y + 'px';
-          mapPinMain.style.left = mapPinMain.offsetLeft - shift.x + 'px';
-
-          if (parseInt(target.style.left, 10) < 0) {
-            target.style.left = '0px';
-          } else if (parseInt(target.style.left, 10) > window.card.WIDTH_MAP - window.card.WIDTH_MARKER) {
-            target.style.left = window.card.WIDTH_MAP - window.card.WIDTH_MARKER + 'px';
-          }
-
-          if (parseInt(target.style.top, 10) < window.card.LOCATION_Y_MIN) {
-            target.style.top = window.card.LOCATION_Y_MIN + 'px';
-          } else if (parseInt(target.style.top, 10) > window.card.LOCATION_Y_MAX) {
-            target.style.top = window.card.LOCATION_Y_MAX + 'px';
-          }
-
-          mapPinMainActive(parseInt(target.style.left, 10), parseInt(target.style.top, 10));
-        }
-
-        function onMouseUp(upEvt) {
-          upEvt.preventDefault();
-
-          document.removeEventListener('mousemove', onMouseMove);
-          document.removeEventListener('mouseup', onMouseUp);
-        }
-
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-      });
-
-      var popup = map.querySelectorAll('.popup');
-      var mapPin = mapPins.querySelectorAll('.map__pin:not(.map__pin--main)');
-      var closeButton = document.querySelectorAll('.popup__close');
-
-      mapPin.forEach(function (item) {
-        var popupHidden = map.querySelectorAll('.popup.hidden');
-        item.addEventListener('click', function (evt) {
-          evt.preventDefault();
-          var modalId = item.getAttribute('data-id');
-          var modalElem = document.querySelector('.popup[id="' + modalId + '"]');
-          for (var a = 0; a < popup.length; a++) {
-            if (popupHidden) {
-              popup[a].classList.add('hidden');
-            }
-          }
-          window.util.openPopup(modalElem);
-        });
-
-        item.addEventListener('keydown', function (evt) {
-          var modalId = evt.target.getAttribute('data-id');
-          var modalElem = document.querySelector('.popup[id="' + modalId + '"]');
-          if (evt.keyCode === window.util.ENTER) {
-            evt.preventDefault();
-
-            for (var a = 0; a < popup.length; a++) {
-              if (popupHidden) {
-                popup[a].classList.add('hidden');
-              }
-            }
-            window.util.openPopup(modalElem);
-          }
-
-          if (evt.keyCode === window.util.ESC) {
-            modalElem.classList.add('hidden');
-          }
-        });
-
-        for (var b = 0; b < closeButton.length; b++) {
-          closeButton[b].addEventListener('click', function (evt) {
-            evt.target.parentNode.classList.add('hidden');
-          });
-        }
-      });
+      window.move();
+      window.popup();
     }
   };
   activatePage();
@@ -163,8 +75,11 @@
     }
   };
 
-  var MAIN_PIN_DEF_X = 570;
-  var MAIN_PIN_DEF_Y = 375;
+  var MAIN_DEF = {
+    X: 570,
+    Y: 375
+  };
+
   var successSaveHandler = function (evt) {
     window.backend.save(new FormData(adForm), function () {
       adForm.reset();
@@ -173,15 +88,15 @@
       removePins();
       removePopup();
       isPageActive = false;
-      mapPinMain.style.top = MAIN_PIN_DEF_Y + 'px';
-      mapPinMain.style.left = MAIN_PIN_DEF_X + 'px';
-      mapPinMainActive(MAIN_PIN_DEF_X, MAIN_PIN_DEF_Y);
-      window.card.successHandler();
-    }, window.card.errorHandler);
+      mapPinMain.style.top = MAIN_DEF.Y + 'px';
+      mapPinMain.style.left = MAIN_DEF.X + 'px';
+      mapPinMainActive(MAIN_DEF.X, MAIN_DEF.Y);
+      window.util.successHandler();
+    }, window.util.errorHandler);
     evt.preventDefault();
   };
 
-  adForm.addEventListener('submit', successSaveHandler, window.card.errorHandler);
+  adForm.addEventListener('submit', successSaveHandler, window.util.errorHandler);
 
   // Переводим страницу в активное состояние
   mapPinMain.addEventListener('mousedown', function () {
@@ -210,11 +125,11 @@
 
   window.map = {
     adForm: adForm,
-    map: map,
     mapPinMain: mapPinMain,
-    mapPinMainLeft: mapPinMainLeft,
-    mapPinMainTop: mapPinMainTop,
-    isPageActive: isPageActive,
-    mapPinMainActive: mapPinMainActive
+    mapPinMainActive: mapPinMainActive,
+    WIDTH_MARKER: WIDTH_MARKER,
+    HEIGHT_MARKER: HEIGHT_MARKER,
+    removePins: removePins,
+    removePopup: removePopup,
   };
 })();
