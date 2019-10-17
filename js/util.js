@@ -31,15 +31,17 @@
 
     document.addEventListener('click', function () {
       if (main.contains(successElement)) {
-        successElement.classList.add('hidden');
+        successElement.remove();
       }
     });
 
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.util.ESC && main.contains(successElement)) {
-        successElement.classList.add('hidden');
+        successElement.remove();
       }
     });
+
+    window.map.isPageActive = false;
   };
 
   var errorHandler = function () {
@@ -51,12 +53,21 @@
 
     var errorBtn = document.querySelector('.error__button');
     errorBtn.addEventListener('click', function () {
-      window.backend.load(window.card.successAvater, errorHandler);
+      errorElement.remove();
+    });
+    errorElement.addEventListener('click', function () {
+      errorElement.remove();
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === CODE.ESC) {
+        errorElement.remove();
+      }
     });
   };
 
   window.util = {
     ESC: CODE.ESC,
+    main: main,
     ENTER: CODE.ENTER,
     disabledOn: disabledOn,
     disabledOff: disabledOff,

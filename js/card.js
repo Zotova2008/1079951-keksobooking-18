@@ -8,20 +8,68 @@
     'bungalo': 'Бунгало'
   };
 
-  var pinsNum = 5;
+  // var pinsNum = 5;
+
+  var mapPins = document.querySelector('.map__pins');
   var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var cardFilters = document.querySelector('.map__filters-container');
+
+  var removePins = function () {
+    var mapPin = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < mapPin.length; i++) {
+      mapPin[i].remove();
+    }
+  };
+  var removePopup = function () {
+    var popup = document.querySelector('.popup');
+    popup.remove();
+  };
+
+  var refreshPopup = function (ad) {
+    var popup = document.querySelector('.popup');
+    if (popup) {
+      popup.remove();
+    }
+    renderAd(ad);
+  };
+
+  var onPinClick = function (pin, ad) {
+    pin.addEventListener('click', function () {
+      refreshPopup(ad);
+    });
+  };
+
+  var onPinKeydown = function (pin, ad) {
+    pin.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.util.ENTER) {
+        refreshPopup(ad);
+      }
+    });
+  };
+
+  var renderFilterPins = function (ads) {
+    window.ads = ads;
+    var filteredAds = window.filterAds(ads);
+    renderPin(filteredAds);
+  };
 
   // Создаем данные для метки
-  var renderMarker = function (data) {
-    var marketElement = pinTemplate.cloneNode(true);
-    marketElement.style.left = data.location.x + 'px';
-    marketElement.style.top = data.location.y + 'px';
-    var marketElementImg = marketElement.querySelector('img');
-    marketElementImg.src = data.author.avatar;
-    marketElementImg.alt = data.offer.title;
-
-    return marketElement;
+  var renderPin = function (data) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < data.length; i++) {
+      var ad = data[i];
+      var pinElement = pinTemplate.cloneNode(true);
+      pinElement.style.left = ad.location.x + 'px';
+      pinElement.style.top = ad.location.y + 'px';
+      var pinElementImg = pinElement.querySelector('img');
+      pinElementImg.src = ad.author.avatar;
+      pinElementImg.alt = ad.offer.title;
+      onPinClick(pinElement, ad);
+      onPinKeydown(pinElement, ad);
+      fragment.appendChild(pinElement);
+    }
+    mapPins.appendChild(fragment);
   };
 
   var renderFeatures = function (feature) {
@@ -36,7 +84,7 @@
   };
 
   // Создаем данные для карточки
-  var renderCard = function (card) {
+  var renderAd = function (card) {
     var cardElement = cardTemplate.cloneNode(true);
     var featuresList = cardElement.querySelector('.popup__features');
 
@@ -56,30 +104,33 @@
     cardElement.querySelectorAll('.popup__photo')[0].remove();
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
 
-    cardElement.classList.add('hidden');
-
-    return cardElement;
+    document.querySelector('.map').insertBefore(cardElement, cardFilters);
   };
-  // Создаем разметку для метки
-  var fragmentMarker = document.createDocumentFragment();
-  // Создаем разметку для карточки
-  var fragmentCard = document.createDocumentFragment();
-  var successAvater = function (avatar) {
-    for (var i = 0; i < avatar.length && i < pinsNum; i++) {
-      fragmentMarker.appendChild(renderMarker(avatar[i]));
-      fragmentMarker.childNodes[i].dataset.id = i + 1;
-      fragmentCard.appendChild(renderCard(avatar[i]));
-      fragmentCard.childNodes[i].setAttribute('id', i + 1);
+
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.util.ENTER && evt.target.matches('.popup__close')) {
+      document.querySelector('.popup').remove();
     }
-  };
+    if (evt.keyCode === window.util.ESC) {
+      if (document.querySelector('.popup')) {
+        document.querySelector('.popup').remove();
+      }
+    }
+  });
 
-  window.backend.load(successAvater, window.util.errorHandler);
+  document.addEventListener('click', function (evt) {
+    if (evt.target.matches('.popup__close')) {
+      document.querySelector('.popup').remove();
+    }
+  });
+
+  // window.backend.load(renderFilterPins, window.util.errorHandler);
 
   window.card = {
-    fragmentMarker: fragmentMarker,
-    fragmentCard: fragmentCard,
-    successAvater: successAvater,
-    renderMarker: renderMarker,
-    pinsNum: pinsNum,
+    cardFilters: cardFilters,
+    renderFilterPins: renderFilterPins,
+    removePins: removePins,
+    removePopup: removePopup,
+    renderPin: renderPin,
   };
 })();
