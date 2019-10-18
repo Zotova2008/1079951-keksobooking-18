@@ -71,13 +71,15 @@
       .slice(0, adsNum);
   };
 
-  document.addEventListener('change', function () {
+  var onChangeFilter = window.debounce(function () {
     if (document.querySelector('.map__card')) {
       document.querySelector('.map__card').remove();
     }
     window.card.removePins();
     window.card.renderPin(filterAds(window.ads));
   });
+
+  mapFilters.addEventListener('change', onChangeFilter);
 
   window.filterAds = filterAds;
 })();
