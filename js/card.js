@@ -21,22 +21,27 @@
       mapPin[i].remove();
     }
   };
-  var removePopup = function () {
-    var popup = document.querySelector('.popup');
-    popup.remove();
-  };
 
-  var refreshPopup = function (ad) {
+  var removePopup = function () {
     var popup = document.querySelector('.popup');
     if (popup) {
       popup.remove();
     }
+    document.removeEventListener('keydown', onActionClosePopup);
+    document.removeEventListener('click', onActionClosePopup);
+  };
+
+  var refreshPopup = function (ad) {
+    removePopup();
+    document.removeEventListener('click', onPinClick);
+    document.removeEventListener('keydown', onPinKeydown);
     renderAd(ad);
   };
 
   var onPinClick = function (pin, ad) {
     pin.addEventListener('click', function () {
       refreshPopup(ad);
+      document.addEventListener('click', onActionClosePopup);
     });
   };
 
@@ -45,7 +50,17 @@
       if (evt.keyCode === window.util.ENTER) {
         refreshPopup(ad);
       }
+      document.addEventListener('keydown', onActionClosePopup);
     });
+  };
+
+  var onActionClosePopup = function (evt) {
+    if (evt.keyCode === window.util.ESC || window.util.ENTER && evt.target.matches('.popup__close')) {
+      removePopup();
+    }
+    if (evt.target.matches('.popup__close')) {
+      removePopup();
+    }
   };
 
   var renderFilterPins = function (ads) {
@@ -106,25 +121,6 @@
 
     document.querySelector('.map').insertBefore(cardElement, cardFilters);
   };
-
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.ENTER && evt.target.matches('.popup__close')) {
-      document.querySelector('.popup').remove();
-    }
-    if (evt.keyCode === window.util.ESC) {
-      if (document.querySelector('.popup')) {
-        document.querySelector('.popup').remove();
-      }
-    }
-  });
-
-  document.addEventListener('click', function (evt) {
-    if (evt.target.matches('.popup__close')) {
-      document.querySelector('.popup').remove();
-    }
-  });
-
-  // window.backend.load(renderFilterPins, window.util.errorHandler);
 
   window.card = {
     cardFilters: cardFilters,

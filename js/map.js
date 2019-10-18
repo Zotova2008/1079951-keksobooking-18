@@ -65,6 +65,8 @@
       mapPinMain.style.left = MAIN_DEF.X + 'px';
       mapPinMainActive(MAIN_DEF.X, MAIN_DEF.Y);
       window.util.successHandler();
+      mapPinMain.addEventListener('mousedown', onActiveClickPage);
+      mapPinMain.addEventListener('keydown', onActiveKeyPage);
     }, window.util.errorHandler);
     evt.preventDefault();
   };
@@ -72,18 +74,25 @@
   adForm.addEventListener('submit', successSaveHandler, window.util.errorHandler);
 
   // Переводим страницу в активное состояние
-  mapPinMain.addEventListener('mousedown', function (evt) {
+  var onActiveClickPage = function (evt) {
     evt.preventDefault();
     isPageActive = true;
     activatePage();
-  });
+    mapPinMain.removeEventListener('mousedown', onActiveClickPage);
+    mapPinMain.removeEventListener('keydown', onActiveKeyPage);
+  };
 
-  mapPinMain.addEventListener('keydown', function (evt) {
+  var onActiveKeyPage = function (evt) {
     isPageActive = true;
     if (evt.keyCode === window.util.ENTER) {
       activatePage();
     }
-  });
+    mapPinMain.removeEventListener('mousedown', onActiveClickPage);
+    mapPinMain.removeEventListener('keydown', onActiveKeyPage);
+  };
+
+  mapPinMain.addEventListener('mousedown', onActiveClickPage);
+  mapPinMain.addEventListener('keydown', onActiveKeyPage);
 
   window.map = {
     adForm: adForm,
