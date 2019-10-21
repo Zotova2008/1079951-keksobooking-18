@@ -1,32 +1,13 @@
 'use strict';
 
 (function () {
-  var ESC = 27;
-  var ENTER = 13;
 
-  // Случайное число из диапазона значений
-  var getRandomRange = function (min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
+  var CODE = {
+    ESC: 27,
+    ENTER: 13
   };
 
-  // Случайное число
-  var getRandomIndex = function (array) {
-    return Math.floor(Math.random() * (array));
-  };
-
-  // Случайное количество элементов из массива
-  var getRandomArray = function (array) {
-    var copyArray = array.slice();
-    var newArray = [];
-    // Случайное количество элементов, но не более длинны массива
-    var size = getRandomRange(1, copyArray.length + 1);
-    for (var i = 0; i < size; i++) {
-      var indexNumber = getRandomRange(0, copyArray.length - 1);
-      newArray.push(copyArray[indexNumber]);
-      copyArray.splice(indexNumber, 1);
-    }
-    return newArray;
-  };
+  var main = document.querySelector('main');
 
   var disabledOn = function (arr) {
     for (var a = 0; a < arr.length; a++) {
@@ -43,14 +24,55 @@
     item.classList.remove('hidden');
   };
 
+  var successHandler = function () {
+    var successTemplate = document.querySelector('#success').content.querySelector('.success');
+    var successElement = successTemplate.cloneNode(true);
+    main.appendChild(successElement);
+
+    document.addEventListener('click', function () {
+      if (main.contains(successElement)) {
+        successElement.remove();
+      }
+    });
+
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.util.ESC && main.contains(successElement)) {
+        successElement.remove();
+      }
+    });
+
+    window.map.isPageActive = false;
+  };
+
+  var errorHandler = function () {
+    var fragment = document.createDocumentFragment();
+    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+    var errorElement = errorTemplate.cloneNode(true);
+    fragment.appendChild(errorElement);
+    main.appendChild(fragment);
+
+    var errorBtn = document.querySelector('.error__button');
+    errorBtn.addEventListener('click', function () {
+      errorElement.remove();
+    });
+    errorElement.addEventListener('click', function () {
+      errorElement.remove();
+    });
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === CODE.ESC) {
+        errorElement.remove();
+      }
+    });
+  };
+
   window.util = {
-    ESC: ESC,
-    ENTER: ENTER,
-    getRandomRange: getRandomRange,
-    getRandomIndex: getRandomIndex,
-    getRandomArray: getRandomArray,
+    ESC: CODE.ESC,
+    main: main,
+    ENTER: CODE.ENTER,
     disabledOn: disabledOn,
     disabledOff: disabledOff,
     openPopup: openPopup,
+    successHandler: successHandler,
+    errorHandler: errorHandler,
   };
 })();
