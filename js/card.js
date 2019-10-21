@@ -8,26 +8,83 @@
     'bungalo': 'Бунгало'
   };
 
-  var WIDTH_MAP = document.querySelector('.map').clientWidth;
-  var WIDTH_MARKER = 65;
-  var HEIGHT_MARKER = 87;
-  var LOCATION_Y_MIN = 130;
-  var LOCATION_Y_MAX = 630;
+  // var pinsNum = 5;
 
+  var mapPins = document.querySelector('.map__pins');
   var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-  var main = document.querySelector('main');
+  var cardFilters = document.querySelector('.map__filters-container');
+
+  var removePins = function () {
+    var mapPin = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < mapPin.length; i++) {
+      mapPin[i].remove();
+    }
+  };
+
+  var removePopup = function () {
+    var popup = document.querySelector('.popup');
+    if (popup) {
+      popup.remove();
+    }
+    document.removeEventListener('keydown', onActionClosePopup);
+    document.removeEventListener('click', onActionClosePopup);
+  };
+
+  var refreshPopup = function (ad) {
+    removePopup();
+    document.removeEventListener('click', onPinClick);
+    document.removeEventListener('keydown', onPinKeydown);
+    renderAd(ad);
+  };
+
+  var onPinClick = function (pin, ad) {
+    pin.addEventListener('click', function () {
+      refreshPopup(ad);
+      document.addEventListener('click', onActionClosePopup);
+    });
+  };
+
+  var onPinKeydown = function (pin, ad) {
+    pin.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === window.util.ENTER) {
+        refreshPopup(ad);
+      }
+      document.addEventListener('keydown', onActionClosePopup);
+    });
+  };
+
+  var onActionClosePopup = function (evt) {
+    if (evt.keyCode === window.util.ESC || window.util.ENTER && evt.target.matches('.popup__close')) {
+      removePopup();
+    }
+    if (evt.target.matches('.popup__close')) {
+      removePopup();
+    }
+  };
+
+  var renderFilterPins = function (ads) {
+    window.ads = ads;
+    var filteredAds = window.filterAds(ads);
+    renderPin(filteredAds);
+  };
 
   // Создаем данные для метки
-  var renderMarker = function (data) {
-    var marketElement = pinTemplate.cloneNode(true);
-    marketElement.style.left = data.location.x + 'px';
-    marketElement.style.top = data.location.y + 'px';
-    var marketElementImg = marketElement.querySelector('img');
-    marketElementImg.src = data.author.avatar;
-    marketElementImg.alt = data.offer.title;
-
-    return marketElement;
+  var renderPin = function (data) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < data.length; i++) {
+      var ad = data[i];
+      var pinElement = pinTemplate.cloneNode(true);
+      pinElement.style.left = ad.location.x + 'px';
+      pinElement.style.top = ad.location.y + 'px';
+      var pinElementImg = pinElement.querySelector('img');
+      pinElementImg.src = ad.author.avatar;
+      pinElementImg.alt = ad.offer.title;
+      onPinClick(pinElement, ad);
+      onPinKeydown(pinElement, ad);
+      fragment.appendChild(pinElement);
+    }
+    mapPins.appendChild(fragment);
   };
 
   var renderFeatures = function (feature) {
@@ -42,7 +99,7 @@
   };
 
   // Создаем данные для карточки
-  var renderCard = function (card) {
+  var renderAd = function (card) {
     var cardElement = cardTemplate.cloneNode(true);
     var featuresList = cardElement.querySelector('.popup__features');
 
@@ -62,65 +119,14 @@
     cardElement.querySelectorAll('.popup__photo')[0].remove();
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
 
-    cardElement.classList.add('hidden');
-
-    return cardElement;
+    document.querySelector('.map').insertBefore(cardElement, cardFilters);
   };
-  // Создаем разметку для метки
-  var fragmentMarker = document.createDocumentFragment();
-  // Создаем разметку для карточки
-  var fragmentCard = document.createDocumentFragment();
-  var successAvater = function (avatar) {
-    for (var i = 0; i < avatar.length; i++) {
-      fragmentMarker.appendChild(renderMarker(avatar[i]));
-      fragmentMarker.childNodes[i].dataset.id = i + 1;
-      fragmentCard.appendChild(renderCard(avatar[i]));
-      fragmentCard.childNodes[i].setAttribute('id', i + 1);
-    }
-  };
-
-  var successHandler = function () {
-    var successTemplate = document.querySelector('#success').content.querySelector('.success');
-    var successElement = successTemplate.cloneNode(true);
-    main.appendChild(successElement);
-
-    document.addEventListener('click', function () {
-      if (main.contains(successElement)) {
-        successElement.classList.add('hidden');
-      }
-    });
-
-    document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.map.ESC_KEY_CODE && main.contains(successElement)) {
-        successElement.classList.add('hidden');
-      }
-    });
-  };
-
-  var errorHandler = function () {
-    var fragment = document.createDocumentFragment();
-    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-    var errorElement = errorTemplate.cloneNode(true);
-    fragment.appendChild(errorElement);
-    main.appendChild(fragment);
-
-    var errorBtn = document.querySelector('.error__button');
-    errorBtn.addEventListener('click', function () {
-      window.backend.load(successAvater, errorHandler);
-    });
-  };
-
-  window.backend.load(successAvater, errorHandler);
 
   window.card = {
-    WIDTH_MAP: WIDTH_MAP,
-    LOCATION_Y_MIN: LOCATION_Y_MIN,
-    LOCATION_Y_MAX: LOCATION_Y_MAX,
-    WIDTH_MARKER: WIDTH_MARKER,
-    HEIGHT_MARKER: HEIGHT_MARKER,
-    fragmentMarker: fragmentMarker,
-    fragmentCard: fragmentCard,
-    successHandler: successHandler,
-    errorHandler: errorHandler
+    cardFilters: cardFilters,
+    renderFilterPins: renderFilterPins,
+    removePins: removePins,
+    removePopup: removePopup,
+    renderPin: renderPin,
   };
 })();
