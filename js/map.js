@@ -59,7 +59,7 @@
       adForm.reset();
       adForm.classList.add('ad-form--disabled');
       map.classList.add('map--faded');
-      // window.card.removePins();
+      window.upload.resetFormImage();
       window.card.removePopup();
       isPageActive = false;
       activatePage();
