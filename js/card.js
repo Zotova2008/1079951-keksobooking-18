@@ -8,8 +8,6 @@
     'bungalo': 'Бунгало'
   };
 
-  // var pinsNum = 5;
-
   var mapPins = document.querySelector('.map__pins');
   var cardTemplate = document.querySelector('#card').content.querySelector('.popup');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -65,7 +63,7 @@
 
   var renderFilterPins = function (ads) {
     window.ads = ads;
-    var filteredAds = window.filterAds(ads);
+    var filteredAds = window.filter.filterAds(ads);
     renderPin(filteredAds);
   };
 

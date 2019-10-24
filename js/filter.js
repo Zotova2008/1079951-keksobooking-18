@@ -13,14 +13,14 @@
     max: 50000
   };
 
-  var filterByType = function (ads) {
+  var getFilterByType = function (ads) {
     if (housingType.value === 'any') {
       return true;
     }
     return ads.offer.type === housingType.value;
   };
 
-  var filterByFeatures = function (element) {
+  var getFilterByFeatures = function (element) {
     var requiredFeatures = Array.from(housingFeatures.querySelectorAll('input:checked')).map(function (item) {
       return item.value;
     });
@@ -29,21 +29,21 @@
     });
   };
 
-  var filterByRooms = function (element) {
+  var getFilterByRooms = function (element) {
     if (housingRooms.value === 'any') {
       return true;
     }
     return element.offer.rooms === +housingRooms.value;
   };
 
-  var filterByGuests = function (element) {
+  var getFilterByGuests = function (element) {
     if (housingGuests.value === 'any') {
       return true;
     }
     return element.offer.guests === +housingGuests.value;
   };
 
-  var filterByPrice = function (element) {
+  var getFilterByPrice = function (element) {
     var isСhoosePrice;
     switch (housingPrice.value) {
       case 'middle':
@@ -65,13 +65,17 @@
     return data
       .filter(function (element) {
         return (
-          filterByType(element) && filterByFeatures(element) && filterByRooms(element) && filterByGuests(element) && filterByPrice(element.offer.price)
+          getFilterByType(element) &&
+          getFilterByFeatures(element) &&
+          getFilterByRooms(element) &&
+          getFilterByGuests(element) &&
+          getFilterByPrice(element.offer.price)
         );
       })
       .slice(0, adsNum);
   };
 
-  var onChangeFilter = window.debounce(function () {
+  var onFilterChange = window.debounce(function () {
     if (document.querySelector('.map__card')) {
       document.querySelector('.map__card').remove();
     }
@@ -79,7 +83,10 @@
     window.card.renderPin(filterAds(window.ads));
   });
 
-  mapFilters.addEventListener('change', onChangeFilter);
+  mapFilters.addEventListener('change', onFilterChange);
 
-  window.filterAds = filterAds;
+  window.filter = {
+    filterAds: filterAds,
+    mapFilters: mapFilters,
+  };
 })();

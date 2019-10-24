@@ -8,6 +8,7 @@
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersFieldset = mapFilters.querySelectorAll('fieldset');
   var mapFiltersSelects = mapFilters.querySelectorAll('select');
+  var buttonFormReset = adForm.querySelector('.ad-form__reset');
 
   var isPageActive = false;
 
@@ -60,6 +61,7 @@
       adForm.classList.add('ad-form--disabled');
       map.classList.add('map--faded');
       window.upload.resetFormImage();
+      window.filter.mapFilters.reset();
       window.card.removePopup();
       isPageActive = false;
       activatePage();
@@ -73,7 +75,27 @@
     evt.preventDefault();
   };
 
+  var deactivationPage = function () {
+    adForm.reset();
+    adForm.classList.add('ad-form--disabled');
+    map.classList.add('map--faded');
+    window.upload.resetFormImage();
+    window.filter.mapFilters.reset();
+    window.card.removePopup();
+    isPageActive = false;
+    activatePage();
+    mapPinMain.style.top = MAIN_DEF.Y + 'px';
+    mapPinMain.style.left = MAIN_DEF.X + 'px';
+    mapPinMainActive(MAIN_DEF.X, MAIN_DEF.Y);
+    mapPinMain.addEventListener('mousedown', onActiveClickPage);
+    mapPinMain.addEventListener('keydown', onActiveKeyPage);
+  };
+
   adForm.addEventListener('submit', successSaveHandler, window.util.errorHandler);
+
+  buttonFormReset.addEventListener('click', function () {
+    deactivationPage();
+  });
 
   // Переводим страницу в активное состояние
   var onActiveClickPage = function (evt) {
@@ -99,6 +121,7 @@
   window.map = {
     adForm: adForm,
     isPageActive: isPageActive,
+    activatePage: activatePage,
     mapPinMain: mapPinMain,
     mapPinMainActive: mapPinMainActive,
     WIDTH_MARKER: WIDTH_MARKER,
