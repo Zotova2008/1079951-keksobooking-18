@@ -67,7 +67,6 @@
     renderPin(filteredAds);
   };
 
-  // Создаем данные для метки
   var renderPin = function (data) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < data.length; i++) {
@@ -96,11 +95,9 @@
     return featureFragment;
   };
 
-  // Создаем данные для карточки
   var renderAd = function (card) {
     var cardElement = cardTemplate.cloneNode(true);
     var featuresList = cardElement.querySelector('.popup__features');
-
     cardElement.querySelector('.popup__title').textContent = card.offer.title;
     cardElement.querySelector('.popup__text--address').textContent = card.offer.address;
     cardElement.querySelector('.popup__text--price').textContent = card.offer.price + '₽/ночь';
@@ -116,12 +113,10 @@
     }
     cardElement.querySelectorAll('.popup__photo')[0].remove();
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
-
     document.querySelector('.map').insertBefore(cardElement, cardFilters);
   };
 
   window.card = {
-    cardFilters: cardFilters,
     renderFilterPins: renderFilterPins,
     removePins: removePins,
     removePopup: removePopup,

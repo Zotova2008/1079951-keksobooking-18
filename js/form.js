@@ -41,13 +41,10 @@
     timein.value = timeout.value;
   });
 
-  // Валидация (удаление) лишних элементов из кол-ва мест
   var inputRoomValidateNumber = function () {
-    // Удаляем все option из #capacity
     inputCapacityOptions.forEach(function (element) {
       element.remove();
     });
-    // Находим элементы указанные в case перебираем #capacity и добавляем option(с указанным элементом в case) в #capacity
     var insertInputCapacityOptions = function (elements) {
       elements.forEach(function (element) {
         inputCapacity.appendChild(inputCapacityOptions[element]);
@@ -72,11 +69,9 @@
 
   inputRoomValidateNumber();
 
-  // Слушаем изменения комнат
   var changeInputRoomNumber = function () {
     inputRoomValidateNumber();
   };
 
-  // добавляем ее на событие change
   inputRoomNumber.addEventListener('change', changeInputRoomNumber);
 })();
