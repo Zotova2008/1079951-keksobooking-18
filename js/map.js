@@ -60,7 +60,7 @@
       errorElement.remove();
     });
     document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === CODE.ESC) {
+      if (evt.keyCode === window.util.ESC) {
         errorElement.remove();
       }
     });
