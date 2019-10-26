@@ -44,21 +44,21 @@
   };
 
   var getFilterByPrice = function (element) {
-    var isСhoosePrice;
+    var isChoicePrice;
     switch (housingPrice.value) {
       case 'middle':
-        isСhoosePrice = (element > prices.min) && (element < prices.max);
+        isChoicePrice = (element > prices.min) && (element < prices.max);
         break;
       case 'low':
-        isСhoosePrice = (element < prices.min);
+        isChoicePrice = (element < prices.min);
         break;
       case 'high':
-        isСhoosePrice = (element > prices.max);
+        isChoicePrice = (element > prices.max);
         break;
       default:
-        isСhoosePrice = true;
+        isChoicePrice = true;
     }
-    return isСhoosePrice;
+    return isChoicePrice;
   };
 
   var filterAds = function (data) {

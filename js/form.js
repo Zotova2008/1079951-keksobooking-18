@@ -2,7 +2,7 @@
 
 (function () {
 
-  var OFFER_PRICE = {
+  var offerPrice = {
     bungalo: 0,
     flat: 1000,
     house: 5000,
@@ -14,31 +14,31 @@
   var inputPrice = window.map.adForm.querySelector('#price');
   var inputCapacity = window.map.adForm.querySelector('#capacity');
   var inputCapacityOptions = inputCapacity.querySelectorAll('option');
-  var timein = window.map.adForm.querySelector('#timein');
-  var timeout = window.map.adForm.querySelector('#timeout');
+  var timeIn = window.map.adForm.querySelector('#timein');
+  var timeOut = window.map.adForm.querySelector('#timeout');
 
   inputType.addEventListener('change', function () {
     var inputTypeCurrentValue = inputType.querySelector('option:checked').value;
-    inputPrice.setAttribute('placeholder', OFFER_PRICE[inputTypeCurrentValue]);
-    inputPrice.setAttribute('minlength', OFFER_PRICE[inputTypeCurrentValue]);
+    inputPrice.setAttribute('placeholder', offerPrice[inputTypeCurrentValue]);
+    inputPrice.setAttribute('minlength', offerPrice[inputTypeCurrentValue]);
   });
 
   inputPrice.addEventListener('input', function (evt) {
     var inputTypeCurrentValue = inputType.querySelector('option:checked').value;
     var target = evt.target;
-    if (target.value < OFFER_PRICE[inputTypeCurrentValue]) {
-      target.setCustomValidity('Минимальная цена за ночь: ' + OFFER_PRICE[inputTypeCurrentValue]);
+    if (target.value < offerPrice[inputTypeCurrentValue]) {
+      target.setCustomValidity('Минимальная цена за ночь: ' + offerPrice[inputTypeCurrentValue]);
     } else {
       target.setCustomValidity('');
     }
   });
 
-  timein.addEventListener('change', function () {
-    timeout.value = timein.value;
+  timeIn.addEventListener('change', function () {
+    timeOut.value = timeIn.value;
   });
 
-  timeout.addEventListener('change', function () {
-    timein.value = timeout.value;
+  timeOut.addEventListener('change', function () {
+    timeIn.value = timeOut.value;
   });
 
   var inputRoomValidateNumber = function () {
