@@ -1,9 +1,15 @@
 'use strict';
 
 (function () {
+  var WIDTH_MARKER = 65;
+  var HEIGHT_MARKER = 87;
+  var MAIN_DEF = {
+    X: 570,
+    Y: 375
+  };
   var main = document.querySelector('main');
   var map = document.querySelector('.map');
-  var mapPinMain = document.querySelector('.map__pin--main');
+  var pinMain = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var adFormFieldset = adForm.querySelectorAll('fieldset');
   var mapFilters = window.filter.mapFilters;
@@ -12,21 +18,18 @@
   var buttonFormReset = adForm.querySelector('.ad-form__reset');
   var isPageActive = false;
   var address = document.querySelector('#address');
-  var mapPinMainLeft = parseInt(mapPinMain.style.left, 10);
-  var mapPinMainTop = parseInt(mapPinMain.style.top, 10);
-  var WIDTH_MARKER = 65;
-  var HEIGHT_MARKER = 87;
-  var MAIN_DEF = {
-    X: 570,
-    Y: 375
-  };
+  var pinMainLeft = parseInt(pinMain.style.left, 10);
+  var pinMainTop = parseInt(pinMain.style.top, 10);
 
-  var mapPinMainActive = function (left, top) {
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+
+  var pinMainActive = function (left, top) {
     address.value = left + ', ' + top;
   };
 
   var successHandler = function () {
-    var successTemplate = document.querySelector('#success').content.querySelector('.success');
+    // var successTemplate = document.querySelector('#success').content.querySelector('.success');
     var successElement = successTemplate.cloneNode(true);
     main.appendChild(successElement);
 
@@ -47,7 +50,7 @@
 
   var errorHandler = function () {
     var fragment = document.createDocumentFragment();
-    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+    // var errorTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorElement = errorTemplate.cloneNode(true);
     fragment.appendChild(errorElement);
     main.appendChild(fragment);
@@ -73,7 +76,7 @@
       window.util.disabledOn(mapFiltersSelects);
       window.card.removePins();
 
-      mapPinMainActive(mapPinMainLeft, mapPinMainTop);
+      pinMainActive(pinMainLeft, pinMainTop);
     } else {
       map.classList.remove('map--faded');
       adForm.classList.remove('ad-form--disabled');
@@ -81,10 +84,10 @@
       window.util.disabledOff(mapFiltersFieldset);
       window.util.disabledOff(mapFiltersSelects);
 
-      mapPinMainLeft = Math.floor(parseInt(mapPinMain.style.left, 10) + WIDTH_MARKER / 2);
-      mapPinMainTop = Math.floor(parseInt(mapPinMain.style.top, 10) + HEIGHT_MARKER);
+      pinMainLeft = Math.floor(parseInt(pinMain.style.left, 10) + WIDTH_MARKER / 2);
+      pinMainTop = Math.floor(parseInt(pinMain.style.top, 10) + HEIGHT_MARKER);
 
-      mapPinMainActive(mapPinMainLeft, mapPinMainTop);
+      pinMainActive(pinMainLeft, pinMainTop);
       window.backend.load(window.card.renderFilterPins, errorHandler);
       window.move();
     }
@@ -95,16 +98,16 @@
     adForm.reset();
     adForm.classList.add('ad-form--disabled');
     map.classList.add('map--faded');
-    window.upload.resetFormImage();
+    window.resetFormImage();
     mapFilters.reset();
     window.card.removePopup();
     isPageActive = false;
     activatePage();
-    mapPinMain.style.top = MAIN_DEF.Y + 'px';
-    mapPinMain.style.left = MAIN_DEF.X + 'px';
-    mapPinMainActive(MAIN_DEF.X, MAIN_DEF.Y);
-    mapPinMain.addEventListener('mousedown', onActiveClickPage);
-    mapPinMain.addEventListener('keydown', onActiveKeyPage);
+    pinMain.style.top = MAIN_DEF.Y + 'px';
+    pinMain.style.left = MAIN_DEF.X + 'px';
+    pinMainActive(MAIN_DEF.X, MAIN_DEF.Y);
+    pinMain.addEventListener('mousedown', onActiveClickPage);
+    pinMain.addEventListener('keydown', onActiveKeyPage);
   };
 
   var successSaveHandler = function (evt) {
@@ -125,8 +128,8 @@
     evt.preventDefault();
     isPageActive = true;
     activatePage();
-    mapPinMain.removeEventListener('mousedown', onActiveClickPage);
-    mapPinMain.removeEventListener('keydown', onActiveKeyPage);
+    pinMain.removeEventListener('mousedown', onActiveClickPage);
+    pinMain.removeEventListener('keydown', onActiveKeyPage);
   };
 
   var onActiveKeyPage = function (evt) {
@@ -134,18 +137,18 @@
     if (evt.keyCode === window.util.ENTER) {
       activatePage();
     }
-    mapPinMain.removeEventListener('mousedown', onActiveClickPage);
-    mapPinMain.removeEventListener('keydown', onActiveKeyPage);
+    pinMain.removeEventListener('mousedown', onActiveClickPage);
+    pinMain.removeEventListener('keydown', onActiveKeyPage);
   };
 
-  mapPinMain.addEventListener('mousedown', onActiveClickPage);
-  mapPinMain.addEventListener('keydown', onActiveKeyPage);
+  pinMain.addEventListener('mousedown', onActiveClickPage);
+  pinMain.addEventListener('keydown', onActiveKeyPage);
 
   window.map = {
     adForm: adForm,
     isPageActive: isPageActive,
-    mapPinMain: mapPinMain,
-    mapPinMainActive: mapPinMainActive,
+    pinMain: pinMain,
+    pinMainActive: pinMainActive,
     WIDTH_MARKER: WIDTH_MARKER,
   };
 })();

@@ -15,9 +15,9 @@
 
   var removePins = function () {
     var mapPin = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < mapPin.length; i++) {
-      mapPin[i].remove();
-    }
+    mapPin.forEach(function (el) {
+      el.remove();
+    });
   };
 
   var removePopup = function () {
@@ -63,35 +63,33 @@
 
   var renderFilterPins = function (ads) {
     window.ads = ads;
-    var filteredAds = window.filter.filterAds(ads);
+    var filteredAds = window.filter.excerptAds(ads);
     renderPin(filteredAds);
   };
 
   var renderPin = function (data) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < data.length; i++) {
-      var ad = data[i];
+    data.forEach(function (el) {
       var pinElement = pinTemplate.cloneNode(true);
-      pinElement.style.left = ad.location.x + 'px';
-      pinElement.style.top = ad.location.y + 'px';
+      pinElement.style.left = el.location.x + 'px';
+      pinElement.style.top = el.location.y + 'px';
       var pinElementImg = pinElement.querySelector('img');
-      pinElementImg.src = ad.author.avatar;
-      pinElementImg.alt = ad.offer.title;
-      onPinClick(pinElement, ad);
-      onPinKeydown(pinElement, ad);
+      pinElementImg.src = el.author.avatar;
+      pinElementImg.alt = el.offer.title;
+      onPinClick(pinElement, el);
+      onPinKeydown(pinElement, el);
       fragment.appendChild(pinElement);
-    }
+    });
     mapPins.appendChild(fragment);
   };
 
   var renderFeatures = function (feature) {
     var featureFragment = document.createDocumentFragment();
-    for (var i = 0; i < feature.offer.features.length; i++) {
+    feature.offer.features.forEach(function (el) {
       var featureElement = document.createElement('li');
-      featureElement.classList.add('popup__feature', 'popup__feature--' + feature.offer.features[i]);
+      featureElement.classList.add('popup__feature', 'popup__feature--' + el);
       featureFragment.appendChild(featureElement);
-    }
-
+    });
     return featureFragment;
   };
 
@@ -107,10 +105,10 @@
     featuresList.innerHTML = '';
     featuresList.appendChild(renderFeatures(card));
     cardElement.querySelector('.popup__description').textContent = card.offer.description;
-    for (var i = 0; i < card.offer.photos.length; i++) {
-      cardElement.querySelector('.popup__photo').src = card.offer.photos[i];
+    card.offer.photos.forEach(function (el) {
+      cardElement.querySelector('.popup__photo').src = el;
       cardElement.querySelector('.popup__photos').appendChild(cardElement.querySelector('.popup__photo').cloneNode(true));
-    }
+    });
     cardElement.querySelectorAll('.popup__photo')[0].remove();
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
     document.querySelector('.map').insertBefore(cardElement, cardFilters);

@@ -8,14 +8,14 @@
   };
 
   var disabledOn = function (arr) {
-    for (var a = 0; a < arr.length; a++) {
-      arr[a].disabled = true;
-    }
+    arr.forEach(function (el) {
+      el.disabled = true;
+    });
   };
   var disabledOff = function (arr) {
-    for (var a = 0; a < arr.length; a++) {
-      arr[a].disabled = false;
-    }
+    arr.forEach(function (el) {
+      el.disabled = false;
+    });
   };
 
   window.util = {

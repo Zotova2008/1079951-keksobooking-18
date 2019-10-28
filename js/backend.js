@@ -2,65 +2,44 @@
 
 (function () {
 
-  var url = {
-    LOAD: 'https://js.dump.academy/keksobooking/data',
-    SAVE: 'https://js.dump.academy/keksobooking',
-  };
-
+  var URL_LOAD = 'https://js.dump.academy/keksobooking/data';
+  var URL_SAVE = 'https://js.dump.academy/keksobooking';
+  var METHOD_LOAD = 'GET';
+  var METHOD_SAVE = 'POST';
   var SUCCESS_CODE = 200;
   var TIMEOUT = 10000;
 
-  var load = function (onSuccess, onError) {
+  var sendXMLHttpRequest = function (url, method, data, loadHandler, errorHandler) {
     var xhr = new XMLHttpRequest();
-
     xhr.responseType = 'json';
-
     xhr.addEventListener('load', function () {
       if (xhr.status === SUCCESS_CODE) {
-        onSuccess(xhr.response);
+        loadHandler(xhr.response);
       } else {
-        onError('Ошибка! ' + 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
+        errorHandler('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      errorHandler('Произошла ошибка соединения');
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      errorHandler('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
     xhr.timeout = TIMEOUT;
-
-    xhr.open('GET', url.LOAD);
-    xhr.send();
+    xhr.open(method, url);
+    var params = data ? data : new FormData();
+    xhr.send(params);
   };
 
-  var save = function (data, onSuccess, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+  var load = function (loadHandler, errorHandler) {
+    sendXMLHttpRequest(URL_LOAD, METHOD_LOAD, false, loadHandler, errorHandler);
+  };
 
-    xhr.addEventListener('load', function () {
-      if (xhr.status === SUCCESS_CODE) {
-        onSuccess(xhr.response);
-      } else {
-        onError('Ошибка! ' + 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-      }
-    });
-
-    xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
-    });
-
-    xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
-    });
-
-    xhr.timeout = TIMEOUT;
-
-    xhr.open('POST', url.SAVE);
-    xhr.send(data);
+  var save = function (data, loadHandler, errorHandler) {
+    sendXMLHttpRequest(URL_SAVE, METHOD_SAVE, data, loadHandler, errorHandler);
   };
 
   window.backend = {

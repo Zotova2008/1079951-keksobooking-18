@@ -50,16 +50,12 @@
     }
   });
 
-  var resetFormImage = function () {
+  window.resetFormImage = function () {
     previewAvatar.src = AVATAR_START;
     var allPhotos = photoContainer.querySelectorAll('.ad-form__photo');
     allPhotos[0].innerHTML = '';
     Array.from(allPhotos).slice(1).forEach(function (el) {
       el.remove();
     });
-  };
-
-  window.upload = {
-    resetFormImage: resetFormImage,
   };
 })();
