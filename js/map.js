@@ -29,7 +29,6 @@
   };
 
   var successHandler = function () {
-    // var successTemplate = document.querySelector('#success').content.querySelector('.success');
     var successElement = successTemplate.cloneNode(true);
     main.appendChild(successElement);
 
@@ -50,7 +49,6 @@
 
   var errorHandler = function () {
     var fragment = document.createDocumentFragment();
-    // var errorTemplate = document.querySelector('#error').content.querySelector('.error');
     var errorElement = errorTemplate.cloneNode(true);
     fragment.appendChild(errorElement);
     main.appendChild(fragment);
