@@ -13,61 +13,38 @@
     max: 50000
   };
 
-  var getFilterBySelect = function (element, param) {
-    return element.value === 'any' ? true : param === +element.value;
-  };
-
-  var getFilterByType = function (element) {
-    return housingType.value === 'any' ? true : element.offer.type === housingType.value;
-  };
-
-  var getFilterByFeatures = function (element) {
-    var requiredFeatures = Array.from(housingFeatures.querySelectorAll('input:checked')).map(function (item) {
-      return item.value;
-    });
-    return requiredFeatures.every(function (feature) {
-      return element.offer.features.includes(feature);
-    });
-  };
-
-  // var getFilterByRooms = function (element) {
-  //   return housingRooms.value === 'any' ? true : element.offer.rooms === +housingRooms.value;
-  // };
-
-  // var getFilterByGuests = function (element) {
-  //   return housingGuests.value === 'any' ? true : element.offer.guests === +housingGuests.value;
-  // };
-
-  var getFilterByPrice = function (element) {
-    var isChoicePrice;
-    switch (housingPrice.value) {
-      case 'middle':
-        isChoicePrice = (element > prices.min) && (element < prices.max);
-        break;
-      case 'low':
-        isChoicePrice = (element < prices.min);
-        break;
-      case 'high':
-        isChoicePrice = (element > prices.max);
-        break;
-      default:
-        isChoicePrice = true;
-    }
-    return isChoicePrice;
-  };
-
   var excerptAds = function (data) {
     return data
       .filter(function (element) {
-        return (
-          getFilterByType(element) &&
-          getFilterByFeatures(element) &&
-          getFilterBySelect(housingRooms, element.offer.rooms) &&
-          getFilterBySelect(housingGuests, element.offer.guests) &&
-          getFilterByPrice(element.offer.price)
-        );
+        return housingType.value === 'any' ? true : element.offer.type === housingType.value;
       })
-      .slice(0, ADS_NUM);
+      .filter(function (element) {
+        switch (housingPrice.value) {
+          case 'any':
+            return true;
+          case 'low':
+            return (element.offer.price < prices.min);
+          case 'middle':
+            return (element.offer.price > prices.min) && (element.offer.price < prices.max);
+          case 'high':
+            return (element.offer.price > prices.max);
+        }
+        return element === housingPrice.value;
+      })
+      .filter(function (element) {
+        return housingRooms.value === 'any' ? true : element.offer.rooms === +housingRooms.value;
+      })
+      .filter(function (element) {
+        return housingGuests.value === 'any' ? true : element.offer.guests === +housingGuests.value;
+      })
+      .filter(function (element) {
+        var requiredFeatures = Array.from(housingFeatures.querySelectorAll('input:checked')).map(function (item) {
+          return item.value;
+        });
+        return requiredFeatures.every(function (feature) {
+          return element.offer.features.includes(feature);
+        });
+      }).slice(0, ADS_NUM);
   };
 
   var onFilterChange = window.debounce(function () {
