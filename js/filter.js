@@ -13,37 +13,35 @@
     max: 50000
   };
 
+  var checkPrice = function (element) {
+    switch (housingPrice.value) {
+      case 'any':
+        return true;
+      case 'low':
+        return (element.offer.price < prices.min);
+      case 'middle':
+        return (element.offer.price > prices.min) && (element.offer.price < prices.max);
+      case 'high':
+        return (element.offer.price > prices.max);
+      default:
+        return element === housingPrice.value;
+    }
+  };
+
   var excerptAds = function (data) {
     return data
       .filter(function (element) {
-        return housingType.value === 'any' ? true : element.offer.type === housingType.value;
-      })
-      .filter(function (element) {
-        switch (housingPrice.value) {
-          case 'any':
-            return true;
-          case 'low':
-            return (element.offer.price < prices.min);
-          case 'middle':
-            return (element.offer.price > prices.min) && (element.offer.price < prices.max);
-          case 'high':
-            return (element.offer.price > prices.max);
-        }
-        return element === housingPrice.value;
-      })
-      .filter(function (element) {
-        return housingRooms.value === 'any' ? true : element.offer.rooms === +housingRooms.value;
-      })
-      .filter(function (element) {
-        return housingGuests.value === 'any' ? true : element.offer.guests === +housingGuests.value;
-      })
-      .filter(function (element) {
+        var isTypeMatched = housingType.value === 'any' ? true : element.offer.type === housingType.value;
+        var isRoomsMatched = housingRooms.value === 'any' ? true : element.offer.rooms === +housingRooms.value;
+        var isGuestMatched = housingGuests.value === 'any' ? true : element.offer.guests === +housingGuests.value;
+        var isPriceMatched = checkPrice(element);
         var requiredFeatures = Array.from(housingFeatures.querySelectorAll('input:checked')).map(function (item) {
           return item.value;
         });
-        return requiredFeatures.every(function (feature) {
+        var isFeaturesMatched = requiredFeatures.every(function (feature) {
           return element.offer.features.includes(feature);
         });
+        return isTypeMatched && isRoomsMatched && isGuestMatched && isPriceMatched && isFeaturesMatched;
       }).slice(0, ADS_NUM);
   };
 
