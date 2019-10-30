@@ -20,7 +20,6 @@
   var address = document.querySelector('#address');
   var pinMainLeft = parseInt(pinMain.style.left, 10);
   var pinMainTop = parseInt(pinMain.style.top, 10);
-
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
@@ -143,10 +142,10 @@
   pinMain.addEventListener('keydown', onActiveKeyPage);
 
   window.map = {
+    WIDTH_MARKER: WIDTH_MARKER,
     adForm: adForm,
     isPageActive: isPageActive,
     pinMain: pinMain,
     pinMainActive: pinMainActive,
-    WIDTH_MARKER: WIDTH_MARKER,
   };
 })();
